@@ -170,7 +170,7 @@ namespace Microsoft.Bot.Sample.LuisBot
 
         {
             var awaitedResults = await activity;
-            await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "c656c827-ba0b-460d-b3b5-e6b5af817a92"), ConvEndAsync,
+            await context.Forward(new BasicQnAMakerDialog("<KEY>", "<ID>"), ConvEndAsync,
                 awaitedResults, CancellationToken.None);
         }
 
@@ -179,7 +179,7 @@ namespace Microsoft.Bot.Sample.LuisBot
             var awaitedResults = await result;
             if (awaitedResults.Text == "HelpDesk?" || awaitedResults.Text == "I need help with my software." || awaitedResults.Text == "I need help with my hardware.")
             {
-                await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "12d55edb-80e5-456c-8645-319659b97025"), ConvEndAsync,
+                await context.Forward(new BasicQnAMakerDialog("<KEY>", "<ID>"), ConvEndAsync,
                 awaitedResults, CancellationToken.None);
             }
             else
