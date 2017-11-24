@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +43,7 @@ namespace Microsoft.Bot.Sample.LuisBot
             AdaptiveCards.AdaptiveCard card = new AdaptiveCard();
 
             // Specify speech for the card.
-            card.Speak = "<s>Your  meeting about \"Adaptive Card design session\"<break strength='weak'/> is starting at 12:30pm</s><s>Do you want to snooze <break strength='weak'/> or do you want to send a late notification to the attendees?</s>";
+            //card.Speak = "<s>Your  meeting about \"Adaptive Card design session\"<break strength='weak'/> is starting at 12:30pm</s><s>Do you want to snooze <break strength='weak'/> or do you want to send a late notification to the attendees?</s>";
 
             // Add text to the card.
             card.Body.Add(new TextBlock()
@@ -54,7 +54,7 @@ namespace Microsoft.Bot.Sample.LuisBot
                 Weight = TextWeight.Bolder
             });
             //uncomment this to test greeting
-            context.UserData.SetValue<string>("Name", userName);
+            //context.UserData.SetValue<string>("Name", userName);
             context.UserData.TryGetValue<string>("Name", out userName);
             if (userName != null && userName != "")
             {
@@ -117,6 +117,7 @@ namespace Microsoft.Bot.Sample.LuisBot
                     Value = $"HelpDesk?",
                     Title = "HelpDesk"
                 };
+
                 CardAction plButton2 = new CardAction()
                 {
                     Value = $"I need help with my software.",
@@ -127,14 +128,27 @@ namespace Microsoft.Bot.Sample.LuisBot
                     Value = $"I need help with my hardware.",
                     Title = "Hardware Resources"
                 };
+                CardAction plButton4 = new CardAction()
+                {
+                    Value = $"I need to reset my password",
+                    Title = "Password Reset"
+                };
+                CardAction plButton5 = new CardAction()
+                {
+                    Value = $"I need help getting connected",
+                    Title = "Get Connected"
+                };
+                
                 cardButtons.Add(plButton);
                 cardButtons.Add(plButton2);
                 cardButtons.Add(plButton3);
+                cardButtons.Add(plButton4);
+                cardButtons.Add(plButton5);
 
-                ThumbnailCard plCard = new ThumbnailCard()
+                HeroCard plCard = new HeroCard()
                 {
                     Title = $"You need IT support.",
-                    //Subtitle = $"{cardContent.Key} Wikipedia Page",
+                    Subtitle = $"Please click a button",
                     Images = cardImages,
                     Buttons = cardButtons
                 };
@@ -165,21 +179,130 @@ namespace Microsoft.Bot.Sample.LuisBot
             }
 
         }
+
+        [LuisIntent("Tutorial")]
+        public async Task Tutorial(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+
+        {
+
+            
+                await context.PostAsync("Great! Lest start by asking me a simple question.  Ask me: \"Where can I get more information on training?\".");
+                context.Wait(TutorialMessageReceived);
+            
+
+        }
+        [LuisIntent("Tools")]
+        public async Task Tools(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+
+        {
+            var awaitedResults = await activity;
+            await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "dd7117b5-0b27-459c-9565-cce3395f0769"), ConvEndAsync,
+                awaitedResults, CancellationToken.None);
+        }
+
+        [LuisIntent("Training")]
+        public async Task Training(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+
+        {
+            QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
+            var awaitedResults = await activity;
+            QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "269f8e3b-09bb-4367-bca3-188c55ec5f57");
+            await HeroCardMessageReceived(context, activity, qnaAnswer);
+            //context.Call(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "269f8e3b-09bb-4367-bca3-188c55ec5f57"), this.HeroCardMessageReceived);
+            //context.Wait(HeroCardMessageReceived);
+        }
+
+        private async Task HeroCardMessageReceived(IDialogContext context, IAwaitable<object> result, QnAMakerResult qnaResult)
+        {
+            // answer is a string
+            var message = await result;
+            Activity reply = ((Activity)context.Activity).CreateReply();
+            string answer = qnaResult.Answer.ToString();
+            string[] qnaAnswerData = answer.Split(';');
+            int dataSize = qnaAnswerData.Length;
+            string title = qnaAnswerData[0];
+            string description = qnaAnswerData[1];
+            string url = qnaAnswerData[2];
+            string imageURL = qnaAnswerData[3];
+            var userQuestion = (context.Activity as Activity).Text;
+
+            HeroCard card = new HeroCard
+            {
+                Title = title,
+                Subtitle = description,
+            };
+            if (title == "IT HelpDesk")
+            {
+                card.Buttons = new List<CardAction>
+                {
+                    new CardAction(ActionTypes.OpenUrl, "Call", value: url)
+                };
+            }
+            else
+            {
+                card.Buttons = new List<CardAction>
+                {
+                    new CardAction(ActionTypes.OpenUrl, "Learn More", value: url)
+                };
+            }
+
+            card.Images = new List<CardImage>
+            {
+                new CardImage( url = imageURL)
+            };
+            reply.Attachments.Add(card.ToAttachment());
+            await context.PostAsync(reply);
+            context.Call(new FeedbackDialog(url, userQuestion), ResumeAfterFeedback);
+
+        }
+                
+        private async Task ResumeAfterFeedback(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            //if (await result != null)
+            //{
+            //    await MessageReceivedAsync(context, result);
+            //}
+            //else
+            //{
+                context.Wait(MessageReceived);
+            //}
+        }
+
+        [LuisIntent("Legal")]
+        public async Task Legal(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+
+        {
+            var awaitedResults = await activity;
+            await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "a78b6ff9-c4fb-4f11-9d47-08c97a951a63"), ConvEndAsync,
+                awaitedResults, CancellationToken.None);
+        }
+
+        [LuisIntent("HR")]
+        public async Task HR(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
+
+        {
+            var awaitedResults = await activity;
+            await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "1c9b56bf-d9c0-4135-83c2-8d97d26c305a"), ConvEndAsync,
+                awaitedResults, CancellationToken.None);
+        }
+
         [LuisIntent("None")]
         public async Task None(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
 
         {
             var awaitedResults = await activity;
-            await context.Forward(new BasicQnAMakerDialog("<KEY>", "<ID>"), ConvEndAsync,
+            await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "c656c827-ba0b-460d-b3b5-e6b5af817a92"), ConvEndAsync,
                 awaitedResults, CancellationToken.None);
         }
+       
 
         private async Task MessageReceivedITSUpport(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var awaitedResults = await result;
-            if (awaitedResults.Text == "HelpDesk?" || awaitedResults.Text == "I need help with my software." || awaitedResults.Text == "I need help with my hardware.")
+            if (awaitedResults.Text == "HelpDesk?" || awaitedResults.Text == "I need help with my software." || awaitedResults.Text == "I need help with my hardware."
+                || awaitedResults.Text == "I need to reset my password" || awaitedResults.Text == "I need help getting connected")
             {
-                await context.Forward(new BasicQnAMakerDialog("<KEY>", "<ID>"), ConvEndAsync,
+                await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "12d55edb-80e5-456c-8645-319659b97025"), ConvEndAsync,
                 awaitedResults, CancellationToken.None);
             }
             else
@@ -217,8 +340,8 @@ namespace Microsoft.Bot.Sample.LuisBot
                 case 2:
                     context.UserData.SetValue<bool>("GetName", true);
                     context.UserData.SetValue<string>("Name", userName);
-                    await context.PostAsync(string.Format("Hi, {0}.  How can I help you?", userName));
-                    context.Wait(MessageReceived);
+                    await context.PostAsync(string.Format("Hi, {0}.  Great to meet you.  Would you like run through a quick totorial?", userName));
+                    context.Wait(TutorialQuestionMessageReceived);
                     break;
                 default:
                     await context.PostAsync("What's your Microsoft alias?");
@@ -227,6 +350,34 @@ namespace Microsoft.Bot.Sample.LuisBot
             }             
            // context.Wait(MessageReceived);
 
+        }
+
+        private async Task TutorialQuestionMessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var message = await result;
+            if (message.Text == "yes" || message.Text == "YES" || message.Text == "Yes")
+            {
+                await context.PostAsync($"Great! Lest start by asking me a simple question.  Ask me: 'Where can I get more information on training?'");
+                context.Wait(TutorialMessageReceived);
+            }
+
+            else
+            {
+                await context.PostAsync("No problem {0}.  You can access the tutorial at a time by typing the word \"tutorial\".");
+                await context.PostAsync("How may I help you?");
+                context.Wait(MessageReceived);
+            }
+        }
+
+        private async Task TutorialMessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)
+        {
+            var response = await result;
+
+            if (response.Text.Contains("Where can I get more information on training?"))
+            {
+                  await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "269f8e3b-09bb-4367-bca3-188c55ec5f57"), ConvEndAsync,
+                    response, CancellationToken.None);
+            }
         }
 
         private async Task GreetingConfimedMessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)
