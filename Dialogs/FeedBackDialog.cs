@@ -1,4 +1,4 @@
-﻿using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +15,14 @@ namespace LuisBot.Dialogs
     {
         private string qnaURL;
         private string userQuestion;
+        private bool isATutorial;
 
-        public FeedbackDialog(string url, string question)
+        public FeedbackDialog(string url, string question, bool tutorialExample = false)
         {
             // keep track of data associated with feedback
             qnaURL = url;
             userQuestion = question;
+            isATutorial = tutorialExample;
         }
 
         public async Task StartAsync(IDialogContext context)
@@ -38,9 +40,10 @@ namespace LuisBot.Dialogs
                     new CardAction(){ Title = "👎", Type=ActionTypes.PostBack, Value=$"no-negative-feedback" } //(n)
                 }
             };
+            //testing
             //feedback.Attachments = new List<Attachment>
             //{
-            //    new KeyboardCard(text: "Options:", buttons: feedback.SuggestedActions.Actions).ToAttachment()
+            //    new ThumbnailCard(text: "Options:", buttons: feedback.SuggestedActions.Actions).ToAttachment()
             //};
             await context.PostAsync(feedback);
             context.Wait(this.MessageReceivedAsync);
@@ -70,8 +73,11 @@ namespace LuisBot.Dialogs
                         {"Vote", "Yes" }
                         // add properties relevant to your bot 
                     };
-
-                    telemetry.TrackEvent("Yes-Vote", properties);
+                    if (!isATutorial)
+                    {
+                        telemetry.TrackEvent("Yes-Vote", properties);
+                    }
+                    
                     await context.PostAsync("Thanks for your feedback!");
                 }
                 else
@@ -84,14 +90,20 @@ namespace LuisBot.Dialogs
 
                         // add properties relevant to your bot 
                     };
-
-                    telemetry.TrackEvent("No-Vote", properties);
-                    await context.PostAsync(@"I'm sorry to hear that."); 
-                    await context.PostAsync(@"We have captured your question and our response which you were not satisfied with. We will use this data to correct our responses.");
-                    await context.PostAsync(@"If you would like to expand on the issue you can click the call button and a leave a 10 second message or you can type ""reference"" to make suggested content changes.");
-
+                    if (!isATutorial)
+                    {
+                        telemetry.TrackEvent("No-Vote", properties);
+                    }
+                        await context.PostAsync(@"I'm sorry to hear that."); 
+                        await context.PostAsync(@"We have captured your question and our response which you were not satisfied with. We will use this data to correct our responses.");
+                        await context.PostAsync(@"If you would like to expand on the issue you can click the call button and a leave a 10 second message or you can type ""reference"" to make suggested content changes.");
+                    }
+                if (isATutorial)
+                {
+                    await context.PostAsync("Great!  Providing feedback in this way will help me to get better and better at servicing you, letting me know what I did right, and what I need to improve on.");
+                    await context.PostAsync("Next, I'm going to show you how you can contribute to our content and provide impact to the community");
+                    await context.PostAsync("Type the word \"contribute\".");
                 }
-                
                 context.Done<IMessageActivity>(null);
             }
             else
