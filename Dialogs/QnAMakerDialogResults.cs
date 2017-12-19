@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Bot.Builder.CognitiveServices.QnAMaker;
-using Microsoft.Bot.Connector;
 
 namespace LuisBot.Dialogs
 {
@@ -29,8 +28,12 @@ namespace LuisBot.Dialogs
             
             HttpResponseMessage response = await client.PostAsync(url, content);
             string jsonResult = await response.Content.ReadAsStringAsync();
+            //jsonResult = jsonResult.Replace('', "");
 
             QnAMakerResults qnaResponse = JsonConvert.DeserializeObject<QnAMakerResults>(jsonResult);
-            return qnaResponse.Answers.FirstOrDefault();         }
+            string decodedString = System.Web.HttpUtility.HtmlDecode(qnaResponse.Answers[0].Answer.ToString());
+            qnaResponse.Answers[0].Answer = decodedString;
+            return qnaResponse.Answers.FirstOrDefault();
+        }
     }
 }
