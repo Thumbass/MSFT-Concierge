@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -15,7 +15,7 @@ namespace LuisBot.Dialogs
         public string ContentName { get; set; }
         [Prompt("Give a brief Description of the resource you wish added or edited (Leave Blank if you are request a resource be removed)")]
         public string Description { get; set; }
-        [Prompt("What is the URL of the resource (i.e. http:https://shop.ecompanystore.com/MSEPPStore/login.aspx?src=MIC_Login&0")]
+        [Prompt("What is the URL of the resource (i.e. https://shop.ecompanystore.com/MSEPPStore/login.aspx?src=MIC_Login&0")]
         public string Url { get; set; }
         
        [Prompt("What is the URL of the Pic you would like to use for the resource")]
