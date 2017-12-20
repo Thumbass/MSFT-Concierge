@@ -208,7 +208,7 @@ namespace Microsoft.Bot.Sample.LuisBot
 
         {
             //var awaitedResults = await activity;
-            //await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "dd7117b5-0b27-459c-9565-cce3395f0769"), ConvEndAsync,
+            //await context.Forward(new BasicQnAMakerDialog("<KEY>", "<Service ID>"), ConvEndAsync,
             //    awaitedResults, CancellationToken.None);
             if (isATutorialForUser)
             {
@@ -218,7 +218,7 @@ namespace Microsoft.Bot.Sample.LuisBot
             {
                 QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
                 var awaitedResults = await activity;
-                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "dd7117b5-0b27-459c-9565-cce3395f0769");
+                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "<Service ID>");
                 await HeroCardMessageReceived(context, activity, qnaAnswer);
             }
         }
@@ -227,7 +227,7 @@ namespace Microsoft.Bot.Sample.LuisBot
         public async Task Training(IDialogContext context, IAwaitable<IMessageActivity> activity, LuisResult result)
 
         {
-            //context.Call(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "269f8e3b-09bb-4367-bca3-188c55ec5f57"), this.HeroCardMessageReceived);
+            //context.Call(new BasicQnAMakerDialog("<KEY>", "<Service ID>"), this.HeroCardMessageReceived);
             //context.Wait(ConvEndAsync);
             if (isATutorialForUser)
             {
@@ -237,7 +237,7 @@ namespace Microsoft.Bot.Sample.LuisBot
             {
                 QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
                 var awaitedResults = await activity;
-                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "269f8e3b-09bb-4367-bca3-188c55ec5f57");
+                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "<Service ID>");
                 await HeroCardMessageReceived(context, activity, qnaAnswer);
             }
             
@@ -248,7 +248,7 @@ namespace Microsoft.Bot.Sample.LuisBot
 
         {
             //var awaitedResults = await activity;
-            //await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "a78b6ff9-c4fb-4f11-9d47-08c97a951a63"), ConvEndAsync,
+            //await context.Forward(new BasicQnAMakerDialog("<KEY>", "<Service ID>"), ConvEndAsync,
             //    awaitedResults, CancellationToken.None);
             if (isATutorialForUser)
             {
@@ -258,7 +258,7 @@ namespace Microsoft.Bot.Sample.LuisBot
             {
                 QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
                 var awaitedResults = await activity;
-                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "a78b6ff9-c4fb-4f11-9d47-08c97a951a63");
+                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "<Service ID>");
                 await HeroCardMessageReceived(context, activity, qnaAnswer);
             }
         }
@@ -268,7 +268,7 @@ namespace Microsoft.Bot.Sample.LuisBot
 
         {
             //var awaitedResults = await activity;
-            //await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "1c9b56bf-d9c0-4135-83c2-8d97d26c305a"), ConvEndAsync,
+            //await context.Forward(new BasicQnAMakerDialog("<KEY>", "<Service ID>"), ConvEndAsync,
             //    awaitedResults, CancellationToken.None);
             if (isATutorialForUser)
             {
@@ -278,7 +278,7 @@ namespace Microsoft.Bot.Sample.LuisBot
             {
                 QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
                 var awaitedResults = await activity;
-                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "1c9b56bf-d9c0-4135-83c2-8d97d26c305a");
+                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "<Service ID>");
                 await HeroCardMessageReceived(context, activity, qnaAnswer);
             }
         }
@@ -288,7 +288,7 @@ namespace Microsoft.Bot.Sample.LuisBot
 
         {
             //var awaitedResults = await activity;
-            //await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "c656c827-ba0b-460d-b3b5-e6b5af817a92"), ConvEndAsync,
+            //await context.Forward(new BasicQnAMakerDialog("<KEY>", "<Service ID>"), ConvEndAsync,
             //    awaitedResults, CancellationToken.None);
             if (isATutorialForUser)
             {
@@ -298,7 +298,7 @@ namespace Microsoft.Bot.Sample.LuisBot
             {
                 QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
                 var awaitedResults = await activity;
-                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "c656c827-ba0b-460d-b3b5-e6b5af817a92");
+                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(result.Query, "<Service ID>");
                 await HeroCardMessageReceived(context, activity, qnaAnswer);
             }
         }
@@ -366,12 +366,12 @@ namespace Microsoft.Bot.Sample.LuisBot
             if (awaitedResults.Text == "HelpDesk?" || awaitedResults.Text == "I need help with my software." || awaitedResults.Text == "I need help with my hardware."
                 || awaitedResults.Text == "I need to reset my password" || awaitedResults.Text == "I need help getting connected")
             {
-               // await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "12d55edb-80e5-456c-8645-319659b97025"), ConvEndAsync,
+               // await context.Forward(new BasicQnAMakerDialog("<KEY>", "<Service ID>"), ConvEndAsync,
                // awaitedResults, CancellationToken.None);
 
                 QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
                 //var awaitedResults = await activity;
-                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(awaitedResults.Text, "12d55edb-80e5-456c-8645-319659b97025");
+                QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(awaitedResults.Text, "<Service ID>");
                 await HeroCardMessageReceived(context, activity, qnaAnswer);
             }
             else
@@ -465,12 +465,12 @@ namespace Microsoft.Bot.Sample.LuisBot
 
             //if (response.Text.Contains("Where can I get more information on training?"))
             //{
-            //await context.Forward(new BasicQnAMakerDialog("bfd0e1ed083141a1b3343dc3a2bb0015", "269f8e3b-09bb-4367-bca3-188c55ec5f57"), ConvEndAsync,
+            //await context.Forward(new BasicQnAMakerDialog("<KEY>", "<Service ID>"), ConvEndAsync,
             //  response, CancellationToken.None);
             isATutorialForUser = true;
             QnAMakerDialogResults cogSvc = new QnAMakerDialogResults();
             var awaitedResults = await activity;
-            QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(awaitedResults.Text, "269f8e3b-09bb-4367-bca3-188c55ec5f57");
+            QnAMakerResult qnaAnswer = await cogSvc.AskChatbotFaqAsync(awaitedResults.Text, "<Service ID>");
             await HeroCardMessageReceived(context, activity, qnaAnswer, true);
                 //context.Wait(CompletedQnATutorialReceived);                
             //}
