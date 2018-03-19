@@ -1,0 +1,3 @@
+MSFT-Concierge Bot Privacy Statement
+
+Everything you say to the bot will be sent to DialogFlow for processing. Your data will only be saved in order to further train the AI responding to your messages. Your usage statistics will be saved but will not be given to third parties nor sold.
